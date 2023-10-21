@@ -23,7 +23,7 @@ export default function HomePage(props){
                 const tempFile = e.target.files[0]
                 setFile(tempFile)
             }} className='hidden' type='file' accept='.mp3,.wave'></input></label> an mp3 file</p>
-            <p>Go crazy on your assignments</p>
+            <p className='italic text-slate-400'>Go crazy on your assignments</p>
         </main>
     )
 }
