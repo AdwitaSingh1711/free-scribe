@@ -1,8 +1,37 @@
-import React from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 /* onChnage function in input tag = for handling input with jsx (look into that a bit more) */
 
 export default function HomePage(props){
     const {setAudioStream,setFile} = props
+
+    const [recordingStatus, setRecordingState] = useState('inactive') /** recordingStatus is a state variable
+    setRecordingStatus is a function. recordingStatus is initialized to the initial value ''inactive */
+    const [audioChunks, setAudioChunks] = useState([]) /*empty array */
+    const [duration,setDuration] = useState(0)
+
+    const mediaRecorder = useRef(null)
+
+    const mimeType = 'audio/webm'
+
+    async function startRecording(){
+        let tempStream
+
+        console.log('Start Recording')
+
+        try{
+            const streamData = navigator.mediaDevices.getUserMedia({
+                    audio:true,
+                    video:false
+                })
+                tempStream = streamData
+        } catch(err){
+            console.log(err.message)
+            return
+        }
+
+        //create new Media recorder instance using the stream
+    }
+
     return (
         <main className='flex-1 p-4 flex flex-col gap-3 text-center
         sm:gap-4 md:gap-5 justify-center pb-10'>
