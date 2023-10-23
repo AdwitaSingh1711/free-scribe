@@ -30,11 +30,6 @@ function App() {
 
   const worker = useRef(null)
 
-  useEffect(()=>{
-    if(!worker.current){
-      worker.current = new Worker(new URL('./'))
-    }
-  })
 // min-h-screen applies the background colour everywhere
   return (
     <div className='flex flex-col max-w-[1000px] mx-auto w-full'>
