@@ -4,33 +4,66 @@ import React, {useState, useEffect, useRef} from 'react'
 export default function HomePage(props){
     const {setAudioStream,setFile} = props
 
-    const [recordingStatus, setRecordingState] = useState('inactive') /** recordingStatus is a state variable
+    const [recordingStatus, setRecordingStatus] = useState('inactive') /** recordingStatus is a state variable
     setRecordingStatus is a function. recordingStatus is initialized to the initial value ''inactive */
     const [audioChunks, setAudioChunks] = useState([]) /*empty array */
     const [duration,setDuration] = useState(0)
 
-    const mediaRecorder = useRef(null)
+    const mediaRecorder = useRef(null) //variable using useRef hook
 
-    const mimeType = 'audio/webm'
+    const mimeType = 'audio/webm'//audio will be recorded in the webm format
 
+    //function to start recording audio using the WebAudio API
+    //You only use async when you need to work with asynchronous tasks like making API requests, reading/writing files, 
+    //or handling events.
     async function startRecording(){
-        let tempStream
+        let tempStream //variable
 
-        console.log('Start Recording')
+        console.log('Start Recording') 
 
+        //getting access to the user's microphone
         try{
             const streamData = navigator.mediaDevices.getUserMedia({
                     audio:true,
                     video:false
                 })
-                tempStream = streamData
+                tempStream = streamData //if audio is received, it is stored in tempStream
         } catch(err){
-            console.log(err.message)
+            console.log(err.message) //if no audio received
             return
         }
 
+        setRecordingStatus('recording')
         //create new Media recorder instance using the stream
+        const media = new MediaRecorder(tempStream,{type : mimeType})
+        //new recording instance for recording the stream
+        //to start the recording
+        mediaRecorder.current = media // Assigns the MediaRecorder instance to the mediaRecorder.current reference,
+        mediaRecorder.current.start()
+
+        let localAudioChunks = [] //for storing audio data
+        mediaRecorder.current.ondataavailable=(event)=>{ //Sets an event listener on the MediaRecorder instance to capture audio data when it becomes available.
+            if(typeof event.data ==='undefined') {return}
+            if(event.data.size===0){return}
+            localAudioChunks.push(event.data)
+        }
     }
+
+
+    //upon stopping recording, we're creating Blobs from those audioChunks
+    async function stopRecording(){
+        setRecordingStatus('inactive')
+        console.log('Stop recording')
+
+        mediaRecorder.current.stop()
+        mediaRecorder.current.onstop = ()=>{
+            const audioBlob = new Blob(audioChunks,{type:mimeType})
+            setAudioStream(audioBlob)//reads audioBlob?
+            setAudioChunks([])
+        }
+    }
+
+    //for letting people know the duration they have recorded for
 
     return (
         <main className='flex-1 p-4 flex flex-col gap-3 text-center
