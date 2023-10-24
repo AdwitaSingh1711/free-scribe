@@ -28,7 +28,11 @@ function App() {
     setAudioStream(null)
   }
 
-  const worker = useRef(null)
+  useEffect(()=>{
+    console.log(audioStream)
+  },[audioStream])
+
+  //const worker = useRef(null)
 
 // min-h-screen applies the background colour everywhere
   return (
